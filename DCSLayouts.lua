@@ -78,6 +78,11 @@ local DefaultTankData = DCS_TableData:MergeTable({
         { statKey = "AGILITY" },
         { statKey = "INTELLECT" },
         { statKey = "STAMINA" },
+	{ statKey = "PvpCategory" },
+		{ statKey = "RATING_2V2" },
+		{ statKey = "RATING_3V3" },
+		{ statKey = "RATING_RBG" },
+		{ statKey = "CONQUEST_PROGRESS" },
 	{ statKey = "OffenseCategory" }, --Re-order before Enhancements to appear more logical.
         { statKey = "ATTACK_DAMAGE" },
         { statKey = "ATTACK_AP" },
@@ -128,6 +133,11 @@ local DefaultNonTankData = DCS_TableData:MergeTable({
         { statKey = "INTELLECT" },
         { statKey = "STAMINA" },
 		{ statKey = "ARMOR" }, --Armor has always been an main attribute stat, except for tanks where it is a defense stat.
+	{ statKey = "PvpCategory" },
+		{ statKey = "RATING_2V2" },
+		{ statKey = "RATING_3V3" },
+		{ statKey = "RATING_RBG" },
+		{ statKey = "CONQUEST_PROGRESS" },
 	{ statKey = "OffenseCategory" }, --Re-order before Enhancements to appear more logical.
         { statKey = "ATTACK_DAMAGE" },
         { statKey = "ATTACK_AP" },
@@ -181,6 +191,9 @@ for k, v in pairs(DCS_TableData.StatData) do
 			end
 			if k == "RatingCategory" then
 				v.frame.Title:SetText(L["Ratings"])
+			end
+			if k == "PvpCategory" then
+				v.frame.Title:SetText(L["PVP"])
 			end
 		else
 			v.frame = CreateFrame("FRAME", nil, StatFrame, "CharacterStatFrameTemplate")
@@ -414,6 +427,12 @@ local function DCS_Table_Relevant()
 		--if v.statKey == "OffenseCategory" then v.hidden = true end
 		--if v.statKey == "DefenseCategory" then v.hidden = true end
 		if v.statKey == "RatingCategory" then v.hidden = true end --ratings are invisible, so the category is also hidden
+		--visiblity of pvp info is off by default
+		if v.statKey == "RATING_2V2" then v.hidden = true end
+		if v.statKey == "RATING_3V3" then v.hidden = true end
+		if v.statKey == "RATING_RBG" then v.hidden = true end
+		if v.statKey == "CONQUEST_PROGRESS" then v.hidden = true end
+		if v.statKey == "PvpCategory" then v.hidden = true end
 	end
 	--gdbprivate.gdb.gdbdefaults.DCS_TableRelevantStatsChecked.RelevantStatsSetChecked = false
 	ShownData.uniqueKey = uniqueKey

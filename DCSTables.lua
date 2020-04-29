@@ -335,6 +335,12 @@ DCS_TableData.StatData.RatingCategory = {
     updateFunc = function()	end
 }
 
+DCS_TableData.StatData.PvpCategory = {
+    category   = true,
+    frame      = char_ctats_pane.PvpCategory,
+    updateFunc = function()	end
+}
+
 local move_speed  --Needs a colon like all other stats have. Concatenated so we don't have to redo every localization to include a colon.
 if namespace.locale == "zhTW" then
 	move_speed = L["Movement Speed"] .. "：" --Chinese colon
@@ -771,5 +777,43 @@ DCS_TableData.StatData.PARRY_RATING = {
 DCS_TableData.StatData.SPEED_RATING = {
 	updateFunc = function(statFrame, unit)
 		statframeratings(statFrame, unit, CR_SPEED)
+	end
+}
+
+local function UpdateRatingFrame(statFrame, unit, bracketIndex, bracketString, bracketCodeName)
+	return function(statFrame, unit)
+		RequestRatedInfo();
+		local rating = select(1, GetPersonalRatedInfo(bracketIndex));
+		local ratingStr = tostring(rating);
+
+		PaperDollFrame_SetLabelAndText(statFrame, bracketString, ratingStr, false, power);
+		statFrame.tooltip = highlight_code..dcs_format(doll_tooltip_format, bracketString).." "..ratingStr..font_color_close;
+		statFrame.tooltip2 = _G["STAT_"..bracketCodeName.."_TOOLTIP"];
+		statFrame:Show();
+	end
+end
+
+DCS_TableData.StatData.RATING_2V2 = {
+	updateFunc = UpdateRatingFrame(statFrame, unit, 1, "2v2 Rating", "RATING_2V2");
+}
+
+DCS_TableData.StatData.RATING_3V3 = {
+	updateFunc = UpdateRatingFrame(statFrame, unit, 2, "3v3 Rating", "RATING_3V3");
+}
+
+DCS_TableData.StatData.RATING_RBG = {
+	updateFunc = UpdateRatingFrame(statFrame, unit, 4, "RBG Rating", "RATING_RBG");
+}
+
+DCS_TableData.StatData.CONQUEST_PROGRESS = {
+	updateFunc = function(statFrame, unit)
+		local currentValue, maxValue, questID = PVPGetConquestLevelInfo();
+		local conquestPercent = 100 * (currentValue / maxValue);
+		local conquestStr = currentValue .. "/" .. maxValue .. " (" .. conquestPercent .. "%)";
+
+		PaperDollFrame_SetLabelAndText(statFrame, "Conquest", conquestStr, false, power);
+		statFrame.tooltip = highlight_code..dcs_format(doll_tooltip_format, "Conqueste").." "..conquestStr..font_color_close;
+		statFrame.tooltip2 = _G["STAT_CONQUEST_TOOLTIP"];
+		statFrame:Show();
 	end
 }
