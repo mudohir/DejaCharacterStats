@@ -335,9 +335,15 @@ DCS_TableData.StatData.RatingCategory = {
     updateFunc = function()	end
 }
 
-DCS_TableData.StatData.PvpCategory = {
+DCS_TableData.StatData.HonorCategory = {
     category   = true,
-    frame      = char_ctats_pane.PvpCategory,
+    frame      = char_ctats_pane.HonorCategory,
+    updateFunc = function()	end
+}
+
+DCS_TableData.StatData.ConquestCategory = {
+    category   = true,
+    frame      = char_ctats_pane.ConquestCategory,
     updateFunc = function()	end
 }
 
@@ -786,7 +792,7 @@ local function UpdateRatingFrame(statFrame, unit, bracketIndex, bracketString, b
 		local rating = select(1, GetPersonalRatedInfo(bracketIndex));
 		local ratingStr = tostring(rating);
 
-		PaperDollFrame_SetLabelAndText(statFrame, bracketString, ratingStr, false, power);
+		PaperDollFrame_SetLabelAndText(statFrame, bracketString, ratingStr, false, rating);
 		statFrame.tooltip = highlight_code..dcs_format(doll_tooltip_format, bracketString).." "..ratingStr..font_color_close;
 		statFrame.tooltip2 = _G["STAT_"..bracketCodeName.."_TOOLTIP"];
 		statFrame:Show();
@@ -794,15 +800,15 @@ local function UpdateRatingFrame(statFrame, unit, bracketIndex, bracketString, b
 end
 
 DCS_TableData.StatData.RATING_2V2 = {
-	updateFunc = UpdateRatingFrame(statFrame, unit, 1, "2v2 Rating", "RATING_2V2");
+	updateFunc = UpdateRatingFrame(statFrame, unit, 1, L["2v2 Rating"], "RATING_2V2");
 }
 
 DCS_TableData.StatData.RATING_3V3 = {
-	updateFunc = UpdateRatingFrame(statFrame, unit, 2, "3v3 Rating", "RATING_3V3");
+	updateFunc = UpdateRatingFrame(statFrame, unit, 2, L["3v3 Rating"], "RATING_3V3");
 }
 
 DCS_TableData.StatData.RATING_RBG = {
-	updateFunc = UpdateRatingFrame(statFrame, unit, 4, "RBG Rating", "RATING_RBG");
+	updateFunc = UpdateRatingFrame(statFrame, unit, 4, L["RBG Rating"], "RATING_RBG");
 }
 
 DCS_TableData.StatData.CONQUEST_PROGRESS = {
@@ -811,9 +817,34 @@ DCS_TableData.StatData.CONQUEST_PROGRESS = {
 		local conquestPercent = 100 * (currentValue / maxValue);
 		local conquestStr = currentValue .. "/" .. maxValue .. " (" .. conquestPercent .. "%)";
 
-		PaperDollFrame_SetLabelAndText(statFrame, "Conquest", conquestStr, false, power);
-		statFrame.tooltip = highlight_code..dcs_format(doll_tooltip_format, "Conqueste").." "..conquestStr..font_color_close;
+		PaperDollFrame_SetLabelAndText(statFrame, "Conquest", conquestStr, false, conquestValue);
+		statFrame.tooltip = highlight_code..dcs_format(doll_tooltip_format, L["Conquest"]).." "..conquestStr..font_color_close;
 		statFrame.tooltip2 = _G["STAT_CONQUEST_TOOLTIP"];
+		statFrame:Show();
+	end
+}
+
+DCS_TableData.StatData.HONOR_PROGRESS = {
+	updateFunc = function(statFrame, unit)
+		local current = UnitHonor("player");
+		local maxHonor = UnitHonorMax("player");
+		local honorProgressStr = tostring(current).."/"..tostring(maxHonor);
+
+		PaperDollFrame_SetLabelAndText(statFrame, "Honor", honorProgressStr, false, current);
+		statFrame.tooltip = highlight_code..dcs_format(doll_tooltip_format, L["Honor"]).." "..honorProgressStr..font_color_close;
+		statFrame.tooltip2 = _G["STAT_HONOR_PROGRESS_TOOLTIP"];
+		statFrame:Show();
+	end
+}
+
+DCS_TableData.StatData.HONOR_LEVEL = {
+	updateFunc = function(statFrame, unit)
+		local honorLevel = UnitHonorLevel("player");
+		local honorLevelStr = tostring(honorLevel);
+
+		PaperDollFrame_SetLabelAndText(statFrame, "Honor Level", honorLevelStr, false, honorLevel);
+		statFrame.tooltip = highlight_code..dcs_format(doll_tooltip_format, L["Honor Level"]).." "..honorLevelStr..font_color_close;
+		statFrame.tooltip2 = _G["STAT_HONOR_LEVEL_TOOLTIP"];
 		statFrame:Show();
 	end
 }
