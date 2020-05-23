@@ -811,11 +811,33 @@ DCS_TableData.StatData.RATING_RBG = {
 	updateFunc = UpdateRatingFrame(statFrame, unit, 4, L["RBG Rating"], "RATING_RBG");
 }
 
+local function RoundNumber(value, decimalPlaces)
+	local roundedValue;
+	local scale = 10 ^ decimalPlaces;
+
+	roundedValue = (floor(value * scale + 0.5))/scale;
+
+	return roundedValue;
+end
+
+local function BuildProgressAndPercentString(current, maximum)
+	local str;
+
+	if (maximum and not (maximum == 0)) then
+		local percent = 100 * (current / maximum);
+		local rounded = RoundNumber(percent, 2);
+		str = current .. "/" .. maximum .. " (" .. rounded .. "%)";
+	else
+		str = "-"
+	end
+
+	return str;
+end
+
 DCS_TableData.StatData.CONQUEST_PROGRESS = {
 	updateFunc = function(statFrame, unit)
 		local currentValue, maxValue, questID = PVPGetConquestLevelInfo();
-		local conquestPercent = 100 * (currentValue / maxValue);
-		local conquestStr = currentValue .. "/" .. maxValue .. " (" .. conquestPercent .. "%)";
+		local conquestStr = BuildProgressAndPercentString(currentValue, maxValue);
 
 		PaperDollFrame_SetLabelAndText(statFrame, "Conquest", conquestStr, false, conquestValue);
 		statFrame.tooltip = highlight_code..dcs_format(doll_tooltip_format, L["Conquest"]).." "..conquestStr..font_color_close;
@@ -826,11 +848,11 @@ DCS_TableData.StatData.CONQUEST_PROGRESS = {
 
 DCS_TableData.StatData.HONOR_PROGRESS = {
 	updateFunc = function(statFrame, unit)
-		local current = UnitHonor("player");
-		local maxHonor = UnitHonorMax("player");
-		local honorProgressStr = tostring(current).."/"..tostring(maxHonor);
+		local currentValue = UnitHonor("player");
+		local maxValue = UnitHonorMax("player");
+		local honorProgressStr = BuildProgressAndPercentString(currentValue, maxValue);
 
-		PaperDollFrame_SetLabelAndText(statFrame, "Honor", honorProgressStr, false, current);
+		PaperDollFrame_SetLabelAndText(statFrame, "Honor", honorProgressStr, false, currentValue);
 		statFrame.tooltip = highlight_code..dcs_format(doll_tooltip_format, L["Honor"]).." "..honorProgressStr..font_color_close;
 		statFrame.tooltip2 = _G["STAT_HONOR_PROGRESS_TOOLTIP"];
 		statFrame:Show();
